@@ -1,0 +1,73 @@
+import java.util.ArrayList;
+import java.util.List;
+
+// Step 1: Define the Event
+class ButtonClickEvent {
+    private final String message;
+
+    public ButtonClickEvent(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
+
+// Step 2: Define the Publisher (Subject)
+class Button {
+    private List<ButtonClickListener> listeners = new ArrayList<>();
+
+    public void addClickListener(ButtonClickListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeClickListener(ButtonClickListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void click() {
+        // Simulate a button click
+        System.out.println("Button clicked.");
+        
+        // Notify all registered listeners
+        ButtonClickEvent event = new ButtonClickEvent("Button was clicked.");
+        for (ButtonClickListener listener : listeners) {
+            listener.onClick(event);
+        }
+    }
+}
+
+// Step 3: Define the Subscriber (Observer)
+interface ButtonClickListener {
+    void onClick(ButtonClickEvent event);
+}
+
+class Dialog implements ButtonClickListener {
+    private String name;
+
+    public Dialog(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void onClick(ButtonClickEvent event) {
+        System.out.println("Dialog " + name + " received a click event: " + event.getMessage());
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        // Step 4: Create instances of the publisher and subscribers
+        Button button = new Button();
+        Dialog dialog1 = new Dialog("1");
+        Dialog dialog2 = new Dialog("2");
+
+        // Step 5: Register subscribers with the publisher
+        button.addClickListener(dialog1);
+        button.addClickListener(dialog2);
+
+        // Simulate a button click, which will notify subscribers
+        button.click();
+    }
+}
